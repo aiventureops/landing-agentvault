@@ -161,12 +161,13 @@
   </footer>
 
   <script>
+    const FORM_API = 'https://enable-aaa-finished-tions.trycloudflare.com/submit';
     function handleSubmit(e) {
       e.preventDefault();
       const email = e.target.querySelector('input[type=email]').value;
-      fetch('https://api.agentmail.to/v0/forms/agentvault-waitlist', {
+      fetch(FORM_API, {
         method: 'POST', headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({ email })
+        body: JSON.stringify({ email, product: 'agentvault' })
       }).catch(() => {});
       document.getElementById('form')?.classList.add('hidden');
       document.getElementById('success')?.classList.remove('hidden');
