@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AgentVault — Secure Secrets for AI Agents</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+    * { font-family: 'Inter', sans-serif; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    .glow { box-shadow: 0 0 40px rgba(34,197,94,0.15); }
+    .glow-sm { box-shadow: 0 0 20px rgba(34,197,94,0.1); }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+    .cursor::after { content:'_'; animation: blink 1s infinite; }
+  </style>
+</head>
+<body class="bg-[#0a0a0a] text-white min-h-screen">
+
+  <!-- Nav -->
+  <nav class="border-b border-white/5 px-6 py-4 flex items-center justify-between max-w-6xl mx-auto">
+    <div class="flex items-center gap-2">
+      <div class="w-7 h-7 bg-green-500 rounded flex items-center justify-center text-black font-bold text-sm">V</div>
+      <span class="font-semibold text-white">AgentVault</span>
+    </div>
+    <a href="#waitlist" class="text-sm text-green-400 hover:text-green-300 font-medium">Get early access →</a>
+  </nav>
+
+  <!-- Hero -->
+  <section class="max-w-4xl mx-auto px-6 pt-24 pb-16 text-center">
+    <div class="inline-flex items-center gap-2 bg-green-500/10 border border-green-500/20 rounded-full px-4 py-1.5 mb-8">
+      <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+      <span class="text-green-400 text-sm font-medium">Early access — free for the first 100 agents</span>
+    </div>
+
+    <h1 class="text-5xl md:text-6xl font-extrabold leading-tight mb-6">
+      Secrets vault built<br/>
+      <span class="text-green-400">for AI agents</span>
+    </h1>
+
+    <p class="text-xl text-white/60 max-w-2xl mx-auto mb-10">
+      Your agents need API keys, OAuth tokens, and credentials to act in the world.
+      AgentVault stores them securely — with short-lived leases, per-agent namespaces,
+      and a full audit log. Zero plaintext ever hits the database.
+    </p>
+
+    <!-- Email form -->
+    <form id="form" class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto mb-4" onsubmit="handleSubmit(event)">
+      <input id="email" type="email" placeholder="you@company.com" required
+        class="flex-1 bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-green-500 focus:bg-white/8 transition" />
+      <button type="submit"
+        class="bg-green-500 hover:bg-green-400 text-black font-semibold px-6 py-3 rounded-lg transition whitespace-nowrap">
+        Join waitlist
+      </button>
+    </form>
+    <p id="success" class="hidden text-green-400 text-sm">✓ You're on the list. We'll be in touch.</p>
+    <p class="text-white/30 text-sm">No credit card. No spam. Cancel anytime.</p>
+  </section>
+
+  <!-- Code snippet -->
+  <section class="max-w-3xl mx-auto px-6 pb-20">
+    <div class="bg-white/[0.03] border border-white/10 rounded-xl p-6 glow-sm">
+      <div class="flex items-center gap-2 mb-4">
+        <div class="w-3 h-3 rounded-full bg-red-500/60"></div>
+        <div class="w-3 h-3 rounded-full bg-yellow-500/60"></div>
+        <div class="w-3 h-3 rounded-full bg-green-500/60"></div>
+        <span class="mono text-white/30 text-xs ml-2">agent.js</span>
+      </div>
+      <pre class="mono text-sm leading-7 overflow-x-auto"><code><span class="text-white/40">// Store a secret — AES-256-GCM, zero plaintext in DB</span>
+<span class="text-purple-400">const</span> <span class="text-blue-300">vault</span> = <span class="text-purple-400">new</span> <span class="text-green-400">AgentVault</span>({ namespace: <span class="text-yellow-300">'my-agent'</span> });
+
+<span class="text-purple-400">await</span> vault.<span class="text-blue-300">set</span>(<span class="text-yellow-300">'stripe_key'</span>, process.env.<span class="text-blue-300">STRIPE_SK</span>);
+
+<span class="text-white/40">// Retrieve with a short-lived lease (expires in 5 min)</span>
+<span class="text-purple-400">const</span> { <span class="text-blue-300">value</span>, <span class="text-blue-300">expiresAt</span> } = <span class="text-purple-400">await</span> vault.<span class="text-blue-300">lease</span>(<span class="text-yellow-300">'stripe_key'</span>, <span class="text-yellow-300">'5m'</span>);
+
+<span class="text-white/40">// Full audit log — who accessed what, when</span>
+<span class="text-purple-400">const</span> <span class="text-blue-300">log</span> = <span class="text-purple-400">await</span> vault.<span class="text-blue-300">auditLog</span>({ last: <span class="text-yellow-300">'24h'</span> });</code></pre>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="max-w-5xl mx-auto px-6 pb-20">
+    <h2 class="text-2xl font-bold text-center mb-12 text-white/80">Everything your agents need to operate securely</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-white/[0.03] border border-white/8 rounded-xl p-6">
+        <div class="w-10 h-10 bg-green-500/10 border border-green-500/20 rounded-lg flex items-center justify-center mb-4 text-xl">🔐</div>
+        <h3 class="font-semibold mb-2">Short-lived leases</h3>
+        <p class="text-white/50 text-sm leading-relaxed">Secrets are never long-lived tokens. Each access returns a time-bounded lease. A compromised agent can't drain your credentials.</p>
+      </div>
+      <div class="bg-white/[0.03] border border-white/8 rounded-xl p-6">
+        <div class="w-10 h-10 bg-green-500/10 border border-green-500/20 rounded-lg flex items-center justify-center mb-4 text-xl">🏗️</div>
+        <h3 class="font-semibold mb-2">Per-agent namespaces</h3>
+        <p class="text-white/50 text-sm leading-relaxed">Each agent or workflow gets an isolated namespace. Agent A can never read Agent B's secrets — even in the same team.</p>
+      </div>
+      <div class="bg-white/[0.03] border border-white/8 rounded-xl p-6">
+        <div class="w-10 h-10 bg-green-500/10 border border-green-500/20 rounded-lg flex items-center justify-center mb-4 text-21">📋</div>
+        <h3 class="font-semibold mb-2">Full audit log</h3>
+        <p class="text-white/50 text-sm leading-relaxed">Every access, rotation, and deletion is logged with agent ID and timestamp. Know exactly which agent touched what and when.</p>
+      </div>
+      <div class="bg-white/[0.03] border border-white/8 rounded-xl p-6">
+        <div class="w-10 h-10 bg-green-500/10 border border-green-500/20 rounded-lg flex items-center justify-center mb-4 text-xl">🔌</div>
+        <h3 class="font-semibold mb-2">MCP server included</h3>
+        <p class="text-white/50 text-sm leading-relaxed">Ships with a Model Context Protocol server. Claude, Cursor, and Windsurf agents can access secrets natively — no SDK required.</p>
+      </div>
+      <div class="bg-white/[0.03] border border-white/8 rounded-xl p-6">
+        <div class="w-10 h-10 bg-green-500/10 border border-green-500/20 rounded-lg flex items-center justify-center mb-4 text-xl">🔄</div>
+        <h3 class="font-semibold mb-2">Auto-rotation</h3>
+        <p class="text-white/50 text-sm leading-relaxed">Set a TTL on any secret and it rotates automatically. Agents always get fresh credentials without any manual intervention.</p>
+      </div>
+      <div class="bg-white/[0.03] border border-white/8 rounded-xl p-6">
+        <div class="w-10 h-10 bg-green-500/10 border border-green-500/20 rounded-lg flex items-center justify-center mb-4 text-xl">🛡️</div>
+        <h3 class="font-semibold mb-2">Zero plaintext in DB</h3>
+        <p class="text-white/50 text-sm leading-relaxed">AES-256-GCM encryption with envelope key management. A database breach exposes only ciphertext — useless without the master key.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="max-w-4xl mx-auto px-6 pb-20">
+    <h2 class="text-2xl font-bold text-center mb-12 text-white/80">Simple pricing</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-white/[0.03] border border-white/8 rounded-xl p-6">
+        <p class="text-white/50 text-sm font-medium mb-1">Free</p>
+        <p class="text-3xl font-bold mb-4">$0<span class="text-lg font-normal text-white/40">/mo</span></p>
+        <ul class="space-y-2 text-sm text-white/60">
+          <li>✓ 5 secrets</li><li>✓ 1 namespace</li><li>✓ API access</li><li>✓ MCP server</li>
+        </ul>
+      </div>
+      <div class="bg-green-500/5 border border-green-500/30 rounded-xl p-6 relative glow-sm">
+        <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-green-500 text-black text-xs font-bold px-3 py-1 rounded-full">POPULAR</div>
+        <p class="text-green-400 text-sm font-medium mb-1">Pro</p>
+        <p class="text-3xl font-bold mb-4">$20<span class="text-lg font-normal text-white/40">/mo</span></p>
+        <ul class="space-y-2 text-sm text-white/60">
+          <li>✓ 100 secrets</li><li>✓ Unlimited namespaces</li><li>✓ Auto-rotation</li><li>✓ Audit log (30 days)</li><li>✓ Priority support</li>
+        </ul>
+      </div>
+      <div class="bg-white/[0.03] border border-white/8 rounded-xl p-6">
+        <p class="text-white/50 text-sm font-medium mb-1">Team</p>
+        <p class="text-3xl font-bold mb-4">$50<span class="text-lg font-normal text-white/40">/mo</span></p>
+        <ul class="space-y-2 text-sm text-white/60">
+          <li>✓ Unlimited secrets</li><li>✓ RBAC / teams</li><li>✓ Audit log (1 year)</li><li>✓ Custom rotation</li><li>✓ SLA</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section id="waitlist" class="max-w-2xl mx-auto px-6 pb-32 text-center">
+    <h2 class="text-3xl font-bold mb-4">Start securing your agents today</h2>
+    <p class="text-white/50 mb-8">Free for the first 100 developers. No credit card required.</p>
+    <form class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto" onsubmit="handleSubmit(event)">
+      <input type="email" placeholder="you@company.com" required
+        class="flex-1 bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-green-500 transition" />
+      <button type="submit" class="bg-green-500 hover:bg-green-400 text-black font-semibold px-6 py-3 rounded-lg transition">Join waitlist</button>
+    </form>
+  </section>
+
+  <footer class="border-t border-white/5 text-center py-8 text-white/25 text-sm">
+    © 2026 AgentVault · Built for the agent economy
+  </footer>
+
+  <script>
+    function handleSubmit(e) {
+      e.preventDefault();
+      const email = e.target.querySelector('input[type=email]').value;
+      fetch('https://api.agentmail.to/v0/forms/agentvault-waitlist', {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ email })
+      }).catch(() => {});
+      document.getElementById('form')?.classList.add('hidden');
+      document.getElementById('success')?.classList.remove('hidden');
+      e.target.innerHTML = '<p class="text-green-400 text-sm">✓ You\'re on the list. We\'ll be in touch.</p>';
+    }
+  </script>
+</body>
+</html>
